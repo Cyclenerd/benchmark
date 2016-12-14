@@ -46,6 +46,7 @@ GEEKBENCH_DOWNLOAD_URL="http://cdn.primatelabs.com/Geekbench-4.0.3-Linux.tar.gz"
 
 ME=$(basename "$0")
 MY_DATE_TIME=$(date "+%Y-%m-%d-%H-%M-%S")
+MY_TIMESTAMP_START=$(date "+%s")
 
 #####################################################################
 # Terminal output helpers
@@ -130,7 +131,7 @@ function check_if_root_or_die() {
 # check_operating_system() obtains the operating system and exits if it's not testet
 function check_operating_system() {
 	MY_UNAME_S="$(uname -s 2>/dev/null)"
-	if [ $MY_UNAME_S = "Linux" ]; then
+	if [ "$MY_UNAME_S" = "Linux" ]; then
 		echo "    > Operating System: Linux"
 	else
 		exit_with_failure "Unsupported operating system 'MY_UNAME_S'. Please use 'Linux' or edit this script :-)"
@@ -580,9 +581,32 @@ echo_code start
 "$MY_DIR/geekbench4" | grep "browser.geekbench.com" | head -n 1 >> "$MY_OUTPUT" 2>&1
 echo_code end
 
+
+#####################################################################
+# Get uptime and load average
+#     http://en.wikipedia.org/wiki/Load_%28computing%29
+#####################################################################
+
+echo_title "Uptime (Load Average)"
+echo_code start
+uptime >> "$MY_OUTPUT" 2>&1
+echo_code end
+
+#####################################################################
+# Calculate the complete duration (runtime)
+#####################################################################
+
+echo_title "Complete Duration"
+MY_TIMESTAMP_END=$(date "+%s")
+MY_DURATION=$((MY_TIMESTAMP_END-MY_TIMESTAMP_START))
+echo_code start
+echo "$MY_DURATION sec"
+echo_code end
+
 #####################################################################
 # EOF
 #####################################################################
+
 {
 	echo "<hr>"
 	echo "$ME - $MY_DATE_TIME"
