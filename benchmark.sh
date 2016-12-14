@@ -45,7 +45,8 @@ GEEKBENCH_DOWNLOAD_URL="http://cdn.primatelabs.com/Geekbench-4.0.3-Linux.tar.gz"
 
 
 ME=$(basename "$0")
-MY_DATE_TIME=$(date "+%Y-%m-%d-%H-%M-%S")
+MY_DATE_TIME=$(date -u "+%Y-%m-%d %H:%M:%S")
+MY_DATE_TIME+=" UTC"
 MY_TIMESTAMP_START=$(date "+%s")
 
 #####################################################################
@@ -378,6 +379,8 @@ hostname_fqdn
 
 echo_step "Kernel"; uname -a >> "$MY_OUTPUT"
 
+echo_step "Date and Time"; echo "$MY_DATE_TIME" >> "$MY_OUTPUT"
+
 echo_step "Hardware Lister (lshw)"
 echo_code start
 lshw >> "$MY_OUTPUT"
@@ -592,6 +595,7 @@ echo_code start
 uptime >> "$MY_OUTPUT" 2>&1
 echo_code end
 
+
 #####################################################################
 # Calculate the complete duration (runtime)
 #####################################################################
@@ -599,9 +603,14 @@ echo_code end
 echo_title "Complete Duration"
 MY_TIMESTAMP_END=$(date "+%s")
 MY_DURATION=$((MY_TIMESTAMP_END-MY_TIMESTAMP_START))
-echo_code start
-echo "$MY_DURATION sec"
-echo_code end
+{
+	echo "<ul>"
+	echo "    <li>Start: MY_TIMESTAMP_START</li>"
+	echo "    <li>End: MY_TIMESTAMP_END</li>"
+	echo "    <li><b>Duration: $MY_DURATION sec</b></li>"
+	echo "</ul>" 
+} >> "$MY_OUTPUT"
+
 
 #####################################################################
 # EOF
