@@ -1,8 +1,14 @@
 #!/bin/bash
 
+# benchmark.sh
+# Author: Nils Knieling - https://github.com/Cyclenerd/benchmark
+
+#
 # Bash Script which runs several Linux benchmarks (Sysbench, UnixBench and Geekbench)
 #
-# Currently only tested with Ubuntu.
+# Currently only tested with Ubuntu. Should also work with every other Linux distribution.
+# Please note the requirements. More information can be found in the README.md
+#
 
 cat << EOF
 
@@ -19,9 +25,17 @@ EOF
 #### Configuration Section
 #####################################################################
 
+# Storage for downloaded files and IO / tests
+# Typically $HOME (/root/benchmark) is a good place.
+# You need approximately 10 GB of free space.
 MY_DIR="$HOME/benchmark"
+
+# Location for the HTML benchmark results
+# This can also be $MY_DIR (/root/benchmark/output.html)
 MY_OUTPUT="$MY_DIR/output.html"
 
+# Benchmarks without package for Linux distribution
+# These benchmark programs are loaded:
 UNIXBENCH_DOWNLOAD_URL="https://github.com/kdlucas/byte-unixbench/archive/v5.1.3.tar.gz"
 GEEKBENCH_DOWNLOAD_URL="http://cdn.primatelabs.com/Geekbench-4.0.3-Linux.tar.gz"
 
@@ -115,10 +129,11 @@ function check_if_root_or_die() {
 
 # check_operating_system() obtains the operating system and exits if it's not testet
 function check_operating_system() {
-	if [ -f /etc/debian_version ]; then
-		echo "    > Operating System: Debian/Ubuntu"
+	MY_UNAME_S="$(uname -s 2>/dev/null)"
+	if [ $MY_UNAME_S = "Linux" ]; then
+		echo "    > Operating System: Linux"
 	else
-		exit_with_failure "Unsupported operating system"
+		exit_with_failure "Unsupported operating system 'MY_UNAME_S'. Please use 'Linux' or edit this script :-)"
 	fi
 }
 
@@ -238,9 +253,9 @@ echo_line
 
 
 #####################################################################
-# Check the Requisites
+# Check the requirements
 #
-# The Ubuntu packages should be installed:
+# These Ubuntu packages should be installed:
 #  curl 
 #  make
 #  gcc
@@ -254,7 +269,7 @@ echo_line
 #  sysbench
 #####################################################################
 
-echo "> Check the Requisites"
+echo "> Check the Requirements"
 
 check_if_root_or_die
 check_operating_system
@@ -283,6 +298,9 @@ fi
 if ! command_exists traceroute; then
 	exit_with_failure "'traceroute' is needed. Please install 'traceroute'."
 fi
+if ! command_exists dd; then
+	exit_with_failure "'dd' is needed. Please install 'dd'. More details can be found at https://www.gnu.org/software/coreutils/manual/"
+fi
 if ! command_exists lshw; then
 	exit_with_failure "'lshw' is needed. Please install 'lshw'. More details can be found at http://www.ezix.org/project/wiki/HardwareLiSter"
 fi
@@ -302,12 +320,13 @@ if ! perl_module_exists "IO::Handle"; then
 	exit_with_failure "Perl module 'IO::Handle' is needed. Please install 'IO::Handle'. More details can be found at http://www.cpan.org/modules/INSTALL.html"
 fi
 
-# Download an build UnixBench
+# Download and build UnixBench
+echo "    > Download UnixBench"
 if curl -fsL "$UNIXBENCH_DOWNLOAD_URL" -o "$MY_DIR/unixbench.tar.gz"; then
 	if tar xvfz "$MY_DIR/unixbench.tar.gz" -C "$MY_DIR" --strip-components=1 > /dev/null 2>&1; then
 		cd "$MY_DIR/UnixBench" || exit_with_failure "Could not find folder '$MY_DIR/UnixBench'"
 		if make > /dev/null 2>&1; then
-			echo "    > UnixBench successfully downloaded and compiled"
+			echo "        > UnixBench successfully downloaded and compiled"
 		else
 			exit_with_failure "Could not build (make) UnixBench"
 		fi
@@ -318,11 +337,12 @@ else
 	exit_with_failure "Could not download UnixBench '$UNIXBENCH_DOWNLOAD_URL'"
 fi
 
-# Download Geekbench
+# Download Geekbench 4
+echo "    > Download Geekbench 4"
 if curl -fsL "$GEEKBENCH_DOWNLOAD_URL" -o "$MY_DIR/geekbench.tar.gz"; then
 	if tar xvfz "$MY_DIR/geekbench.tar.gz" -C "$MY_DIR" --strip-components=3 > /dev/null 2>&1; then
 		if [[ -x "$MY_DIR/geekbench4" ]]; then
-			echo "    > Geekbench successfully downloaded"
+			echo "        > Geekbench successfully downloaded"
 		else
 			exit_with_failure "Could not find '$MY_DIR/geekbench4'"
 		fi
@@ -348,16 +368,16 @@ echo_line
 
 
 #####################################################################
-# System Info and Versions
+# Get System info and versions
 #####################################################################
 
-echo_title "System"
+echo_title "System Info"
 
 hostname_fqdn
 
 echo_step "Kernel"; uname -a >> "$MY_OUTPUT"
 
-echo_step "Hardware Lister"
+echo_step "Hardware Lister (lshw)"
 echo_code start
 lshw >> "$MY_OUTPUT"
 echo_code end
@@ -395,7 +415,7 @@ echo_code end
 
 
 #####################################################################
-# Bandwidth Benchmark
+# Run bandwidth benchmarks
 #####################################################################
 
 echo_title "Bandwidth Benchmark"
@@ -434,7 +454,7 @@ download_benchmark 'Hetzner, Nuernberg, Germany' 'http://hetzner.de/100MB.iso'
 
 
 #####################################################################
-# I/O Benchmark
+# Run I/O benchmarks
 #####################################################################
 
 echo_title "I/O Benchmark"
@@ -515,18 +535,18 @@ echo_code end
 
 
 #####################################################################
-# Sysbench
+# Run SysBench
 #####################################################################
 
-echo_title "Sysbench"
+echo_title "SysBench"
 
-echo_step "Sysbench 1 x CPU"
+echo_step "SysBench 1 x CPU"
 echo_code start
 sysbench --test=cpu --cpu-max-prime=20000 --num-threads=1 run >> "$MY_OUTPUT"
 echo_code end
 
 if [[ $MY_CPU_COUNT -gt "0" ]]; then
-	echo_step "Sysbench $MY_CPU_COUNT x CPU"
+	echo_step "SysBench $MY_CPU_COUNT x CPU"
 	echo_code start
 	sysbench --test=cpu --cpu-max-prime=20000 --num-threads="$MY_CPU_COUNT" run >> "$MY_OUTPUT"
 	echo_code end
@@ -534,7 +554,7 @@ fi
 
 
 #####################################################################
-# UnixBench
+# Run UnixBench
 #####################################################################
 
 echo_line
@@ -548,14 +568,14 @@ echo_code end
 
 
 #####################################################################
-# Geekbench
+# Run Geekbench 4
 #####################################################################
 
 echo_line
-echo "Now let's run the new and hip Geekbench. This takes a little longer."
+echo "Now let's run the new and hip Geekbench 4. This takes a little longer."
 echo_line
 
-echo_title "Geekbench"
+echo_title "Geekbench 4"
 echo_code start
 "$MY_DIR/geekbench4" | grep "browser.geekbench.com" | head -n 1 >> "$MY_OUTPUT" 2>&1
 echo_code end
