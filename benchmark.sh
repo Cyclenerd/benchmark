@@ -20,6 +20,7 @@ EOF
 #####################################################################
 
 MY_DIR="$HOME/benchmark"
+MY_OUTPUT="$MY_DIR/output.html"
 
 UNIXBENCH_DOWNLOAD_URL="https://github.com/kdlucas/byte-unixbench/archive/v5.1.3.tar.gz"
 GEEKBENCH_DOWNLOAD_URL="http://cdn.primatelabs.com/Geekbench-4.0.3-Linux.tar.gz"
@@ -259,12 +260,8 @@ check_if_root_or_die
 check_operating_system
 if [[ ! -d "$MY_DIR" ]]; then
 	mkdir "$MY_DIR" || exit_with_failure "Could not create folder '$MY_DIR'"
-	MY_OUTPUT="$MY_DIR/output.html"
-	echo "<html>" > "$MY_OUTPUT"
-	if [[ ! -w "$MY_OUTPUT" ]]; then
-		exit_with_failure "Could not create output file '$MY_OUTPUT'"
-	fi
 fi
+echo "<html>" > "$MY_OUTPUT" || exit_with_failure "Could not write to output file '$MY_OUTPUT'"
 if ! command_exists curl; then
 	exit_with_failure "'curl' is needed. Please install 'curl'. More details can be found at https://curl.haxx.se/"
 fi
