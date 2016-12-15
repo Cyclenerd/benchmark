@@ -8,7 +8,7 @@ With my other scripts you can [automate the installation](https://github.com/Cyc
 
 ## Demo Output
 
-https://cyclenerd.github.io/benchmark_demo/_
+https://cyclenerd.github.io/benchmark_demo/
 
 
 ## Requirements
@@ -52,7 +52,7 @@ Run as root:
 
 Example including upload to Pastebin:
 
-	bash benchmark.sh && pbin -n "Benchmark Acer A0756 with Fedora" -f "html5" -l < "/root/benchmark/output.html"
+	bash benchmark.sh && pbin -n "Acer A0756" -f "html5" -l < "/root/benchmark/output.html"
 
 You can get `pbin` here: https://github.com/Cyclenerd/pastebin-shell 
 
