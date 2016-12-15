@@ -602,13 +602,14 @@ echo_code end
 
 echo_title "Complete Duration"
 MY_TIMESTAMP_END=$(date "+%s")
-MY_DURATION=$((MY_TIMESTAMP_END-MY_TIMESTAMP_START))
+MY_DURATION_SEC=$((MY_TIMESTAMP_END-MY_TIMESTAMP_START))
+MY_DURATION_MIN=$((MY_DURATION_SEC/60))
 {
-	echo "<ul>"
-	echo "    <li>Start: MY_TIMESTAMP_START</li>"
-	echo "    <li>End: MY_TIMESTAMP_END</li>"
-	echo "    <li><b>Duration: $MY_DURATION sec</b></li>"
-	echo "</ul>" 
+	echo    "<ul>"
+	echo    "    <li>Start: $MY_TIMESTAMP_START</li>"
+	echo    "    <li>End: $MY_TIMESTAMP_END</li>"
+	echo -n "    <li><b>Duration: "; printf "%.0f sec / %.2f min" "$MY_DURATION_SEC" "$MY_DURATION_MIN"; echo "</b></li>"
+	echo    "</ul>" 
 } >> "$MY_OUTPUT"
 
 
