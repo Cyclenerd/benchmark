@@ -36,8 +36,10 @@ MY_OUTPUT="$MY_DIR/output.html"
 
 # Benchmarks without package for Linux distribution
 # These benchmark programs are loaded:
-UNIXBENCH_DOWNLOAD_URL="https://github.com/kdlucas/byte-unixbench/archive/v5.1.3.tar.gz"
-GEEKBENCH_DOWNLOAD_URL="http://cdn.primatelabs.com/Geekbench-4.0.3-Linux.tar.gz"
+MY_UNIXBENCH_DOWNLOAD_URL="https://cyclenerd.github.io/benchmark/byte-unixbench-5.1.3.tar.gz"
+#MY_UNIXBENCH_DOWNLOAD_URL="https://github.com/kdlucas/byte-unixbench/archive/v5.1.3.tar.gz"
+MY_GEEKBENCH_DOWNLOAD_URL="https://cyclenerd.github.io/benchmark/Geekbench-5.0.2-Linux.tar.gz"
+#MY_GEEKBENCH_DOWNLOAD_URL="http://cdn.geekbench.com/Geekbench-Geekbench-5.0.2-Linux.tar.gz"
 
 #####################################################################
 #### END Configuration Section
@@ -324,7 +326,7 @@ fi
 
 # Download and build UnixBench
 echo "    > Download UnixBench"
-if curl -fsL "$UNIXBENCH_DOWNLOAD_URL" -o "$MY_DIR/unixbench.tar.gz"; then
+if curl -fsL "$MY_UNIXBENCH_DOWNLOAD_URL" -o "$MY_DIR/unixbench.tar.gz"; then
 	if tar xvfz "$MY_DIR/unixbench.tar.gz" -C "$MY_DIR" --strip-components=1 > /dev/null 2>&1; then
 		cd "$MY_DIR/UnixBench" || exit_with_failure "Could not find folder '$MY_DIR/UnixBench'"
 		if make > /dev/null 2>&1; then
@@ -336,12 +338,12 @@ if curl -fsL "$UNIXBENCH_DOWNLOAD_URL" -o "$MY_DIR/unixbench.tar.gz"; then
 		exit_with_failure "Could not unpack '$MY_DIR/unixbench.tar.gz'"
 	fi
 else
-	exit_with_failure "Could not download UnixBench '$UNIXBENCH_DOWNLOAD_URL'"
+	exit_with_failure "Could not download UnixBench '$MY_UNIXBENCH_DOWNLOAD_URL'"
 fi
 
 # Download Geekbench 4
 echo "    > Download Geekbench 4"
-if curl -fsL "$GEEKBENCH_DOWNLOAD_URL" -o "$MY_DIR/geekbench.tar.gz"; then
+if curl -fsL "$MY_GEEKBENCH_DOWNLOAD_URL" -o "$MY_DIR/geekbench.tar.gz"; then
 	if tar xvfz "$MY_DIR/geekbench.tar.gz" -C "$MY_DIR" --strip-components=3 > /dev/null 2>&1; then
 		if [[ -x "$MY_DIR/geekbench4" ]]; then
 			echo "        > Geekbench successfully downloaded"
@@ -352,7 +354,7 @@ if curl -fsL "$GEEKBENCH_DOWNLOAD_URL" -o "$MY_DIR/geekbench.tar.gz"; then
 		exit_with_failure "Could not unpack '$MY_DIR/geekbench.tar.gz'"
 	fi
 else
-	exit_with_failure "Could not download Geekbench '$GEEKBENCH_DOWNLOAD_URL'"
+	exit_with_failure "Could not download Geekbench '$MY_GEEKBENCH_DOWNLOAD_URL'"
 fi
 
 
