@@ -249,12 +249,11 @@ function download_benchmark() {
 		echo "Error"
 	fi
 }
+#####################################################################
+# MAIN
+#####################################################################
 
 echo_line
-echo "Don't trust benchmark results you see,"
-echo "      test out performance for yourself."
-echo_line
-
 
 #####################################################################
 # Check the requirements
@@ -341,14 +340,14 @@ else
 	exit_with_failure "Could not download UnixBench '$MY_UNIXBENCH_DOWNLOAD_URL'"
 fi
 
-# Download Geekbench 4
-echo "    > Download Geekbench 4"
+# Download Geekbench 5
+echo "    > Download Geekbench 5"
 if curl -fsL "$MY_GEEKBENCH_DOWNLOAD_URL" -o "$MY_DIR/geekbench.tar.gz"; then
-	if tar xvfz "$MY_DIR/geekbench.tar.gz" -C "$MY_DIR" --strip-components=3 > /dev/null 2>&1; then
-		if [[ -x "$MY_DIR/geekbench4" ]]; then
+	if tar xvfz "$MY_DIR/geekbench.tar.gz" -C "$MY_DIR" --strip-components=1 > /dev/null 2>&1; then
+		if [[ -x "$MY_DIR/geekbench5" ]]; then
 			echo "        > Geekbench successfully downloaded"
 		else
-			exit_with_failure "Could not find '$MY_DIR/geekbench4'"
+			exit_with_failure "Could not find '$MY_DIR/geekbench5'"
 		fi
 	else
 		exit_with_failure "Could not unpack '$MY_DIR/geekbench.tar.gz'"
@@ -356,7 +355,6 @@ if curl -fsL "$MY_GEEKBENCH_DOWNLOAD_URL" -o "$MY_DIR/geekbench.tar.gz"; then
 else
 	exit_with_failure "Could not download Geekbench '$MY_GEEKBENCH_DOWNLOAD_URL'"
 fi
-
 
 
 #####################################################################
@@ -565,7 +563,6 @@ fi
 
 echo_line
 echo " Now let's run the good old UnixBench. This takes a while."
-echo "      Time to get a Club Mate..."
 echo_line
 echo_title "UnixBench"
 echo_code start
@@ -574,16 +571,16 @@ echo_code end
 
 
 #####################################################################
-# Run Geekbench 4
+# Run Geekbench 5
 #####################################################################
 
 echo_line
-echo "Now let's run the new and hip Geekbench 4. This takes a little longer."
+echo "Now let's run Geekbench 5. This takes a little longer."
 echo_line
 
-echo_title "Geekbench 4"
+echo_title "Geekbench 5"
 echo_code start
-"$MY_DIR/geekbench4" | grep "browser.geekbench.com" | head -n 1 >> "$MY_OUTPUT" 2>&1
+"$MY_DIR/geekbench5" | grep "browser.geekbench.com" | head -n 1 >> "$MY_OUTPUT" 2>&1
 echo_code end
 
 
