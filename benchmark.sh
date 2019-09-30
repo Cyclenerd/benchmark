@@ -49,6 +49,9 @@ MY_GEEKBENCH_DOWNLOAD_URL="https://cyclenerd.github.io/benchmark/Geekbench-5.0.2
 MY_GEEKBENCH_EMAIL=""
 MY_GEEKBENCH_KEY=""
 
+# Set maximal traceroute hop count
+MY_TRACEROUTE_MAX_HOP="15"
+
 #####################################################################
 #### END Configuration Section
 #####################################################################
@@ -238,7 +241,7 @@ function disk_info() {
 function traceroute_benchmark() {
 	echo_step "Traceroute ($1)"
 	echo_code start
-	traceroute "$1" >> "$MY_OUTPUT" 2>&1
+	traceroute -m "$MY_TRACEROUTE_MAX_HOP" "$1" >> "$MY_OUTPUT" 2>&1
 	echo_code end
 }
 
