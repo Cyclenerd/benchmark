@@ -14,7 +14,7 @@ https://cyclenerd.github.io/benchmark_demo/
 ## Requirements
 
 * __GNU/Linux__
-	* Currently only tested with Ubuntu and Fedora. Should also work with every other Linux distribution.
+	* Currently only tested with Ubuntu and Fedora. Should also work with every other Linux distribution and Windows Subsystem for Linux (WSL).
 * [Bash](https://www.gnu.org/software/bash/)
 * [curl](https://curl.haxx.se/)
 * [Make](https://www.gnu.org/software/make/)
@@ -34,7 +34,7 @@ These Ubuntu packages should be installed:
 
 	apt-get install bash curl make gcc build-essential net-tools traceroute perl lshw ioping fio sysbench
 
-[UnixBench](https://github.com/kdlucas/byte-unixbench) and [Geekbench 4](http://geekbench.com/) are automatically loaded and are temporarily installed.
+[UnixBench](https://github.com/kdlucas/byte-unixbench) and [Geekbench 5](http://geekbench.com/) are automatically loaded and are temporarily installed.
 
 
 ## Installation
@@ -43,12 +43,20 @@ Download:
 
 	curl -f https://raw.githubusercontent.com/Cyclenerd/benchmark/master/benchmark.sh -o benchmark.sh
 
+Alternative download with short URL:
+
+curl -fL http://bit.ly/benchmark_sh -o benchmark.sh
+
 
 ## Usage
 
 Run as root:
 
 	bash benchmark.sh
+
+Unlock Geekbench using EMAIL and KEY:
+
+	bash benchmark.sh -e <Geekbench license email> -k <Geekbench license key>
 
 Example including upload to Pastebin:
 
@@ -61,7 +69,7 @@ You can get `pbin` here: https://github.com/Cyclenerd/pastebin-shell
 
 * Check the requirements
 * Download and build UnixBench
-* Download Geekbench 4
+* Download Geekbench 5
 * Get System info and versions
 	* Hostename
 	* Complete hardware
@@ -80,9 +88,8 @@ You can get `pbin` here: https://github.com/Cyclenerd/pastebin-shell
 	* CPU
 * Run UnixBench
 	* The complete program! This takes a little longer.
-* Run Geekbench 4
-	* Mainly CPU and graphics
-	* Ideal for your boss: Value is comparable to Geekbench from the iPhone 😉
+* Run Geekbench 5
+	* CPU
 * Get uptime and load average
 * Calculate the complete duration (runtime)
 
