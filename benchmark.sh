@@ -41,6 +41,14 @@ MY_UNIXBENCH_DOWNLOAD_URL="https://cyclenerd.github.io/benchmark/byte-unixbench-
 MY_GEEKBENCH_DOWNLOAD_URL="https://cyclenerd.github.io/benchmark/Geekbench-5.0.2-Linux.tar.gz"
 #MY_GEEKBENCH_DOWNLOAD_URL="http://cdn.geekbench.com/Geekbench-Geekbench-5.0.2-Linux.tar.gz"
 
+# Unlock Geekbench using EMAIL and KEY
+# If you purchased Geekbench, enter your email address and license
+# key from your email receipt with the following command line:
+#    benchmark.sh -e <EMAIL> -k <KEY>
+# As an alternative you can also save your data as follows:
+MY_GEEKBENCH_EMAIL=""
+MY_GEEKBENCH_KEY=""
+
 #####################################################################
 #### END Configuration Section
 #####################################################################
@@ -54,6 +62,19 @@ MY_TIMESTAMP_START=$(date "+%s")
 #####################################################################
 # Terminal output helpers
 #####################################################################
+
+function usage {
+	returnCode="$1"
+	echo
+	echo -e "Usage: 
+	$ME [-e <Geekbench license email>] [-k <Geekbench license key>] [-h]"
+	echo -e "Options:
+	[-e <Geekbench license email>]\\t unlock Geekbench using EMAIL and KEY (default: $MY_GEEKBENCH_EMAIL)
+	[-k <Geekbench license key>]\\t unlock Geekbench using EMAIL and KEY (default: $MY_GEEKBENCH_KEY)
+	[-h]\\t\\t\\t\\t displays help (this message)"
+	echo
+	exit "$returnCode"
+}
 
 # echo_title() outputs a title to stdout and MY_OUTPUT
 function echo_title() {
@@ -90,13 +111,13 @@ function echo_equals() {
 	COUNTER=0
 	while [  $COUNTER -lt "$1" ]; do
 		printf '='
-		let COUNTER=COUNTER+1 
+		((COUNTER=COUNTER+1)) 
 	done
 }
 
 # echo_line() outputs a line with 70 =
 function echo_line() {
-	echo_equals "70"
+	echo_equals "90"
 	echo
 }
 
@@ -255,6 +276,24 @@ function download_benchmark() {
 
 echo_line
 
+while getopts ":e:k:h" opt; do
+	case $opt in
+	e)
+		MY_GEEKBENCH_EMAIL="$OPTARG"
+		;;
+	k)
+		MY_GEEKBENCH_KEY="$OPTARG"
+		;;
+	h)
+		usage 0
+		;;
+	*)
+		echo "Invalid option: -$OPTARG"
+		usage 1
+		;;
+	esac
+done
+
 #####################################################################
 # Check the requirements
 #
@@ -356,12 +395,23 @@ else
 	exit_with_failure "Could not download Geekbench '$MY_GEEKBENCH_DOWNLOAD_URL'"
 fi
 
+# Unlock Geekbench 5
+if [[ $MY_GEEKBENCH_EMAIL && $MY_GEEKBENCH_KEY ]]; then
+	if "$MY_DIR/geekbench5" --unlock "$MY_GEEKBENCH_EMAIL" "$MY_GEEKBENCH_KEY" > /dev/null 2>&1; then
+		echo "        > Geekbench successfully unlocked"
+	else
+		exit_with_failure "Could not unlock Geekbench"
+	fi
+else
+	echo "        > Geekbench is in tryout mode"
+fi
 
 #####################################################################
 # Let's start
 #####################################################################
 
 echo_line
+echo
 echo " Depending on the hardware, the runtime is slightly longer."
 echo
 echo "      Please be patient..!"
@@ -580,7 +630,7 @@ echo_line
 
 echo_title "Geekbench 5"
 echo_code start
-"$MY_DIR/geekbench5" | grep "browser.geekbench.com" | head -n 1 >> "$MY_OUTPUT" 2>&1
+"$MY_DIR/geekbench5" >> "$MY_OUTPUT" 2>&1
 echo_code end
 
 
