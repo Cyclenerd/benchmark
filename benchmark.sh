@@ -61,6 +61,7 @@ ME=$(basename "$0")
 MY_DATE_TIME=$(date -u "+%Y-%m-%d %H:%M:%S")
 MY_DATE_TIME+=" UTC"
 MY_TIMESTAMP_START=$(date "+%s")
+MY_GEEKBENCH_NO_UPLOAD=""
 
 #####################################################################
 # Terminal output helpers
@@ -70,11 +71,12 @@ function usage {
 	returnCode="$1"
 	echo
 	echo -e "Usage: 
-	$ME [-e <Geekbench license email>] [-k <Geekbench license key>] [-h]"
+	$ME [-e <EMAIL>] [-k <KEY>] [-n] [-h]"
 	echo -e "Options:
-	[-e <Geekbench license email>]\\t unlock Geekbench using EMAIL and KEY (default: $MY_GEEKBENCH_EMAIL)
-	[-k <Geekbench license key>]\\t unlock Geekbench using EMAIL and KEY (default: $MY_GEEKBENCH_KEY)
-	[-h]\\t\\t\\t\\t displays help (this message)"
+	[-e <EMAIL>]\\t unlock Geekbench using EMAIL and KEY (default: $MY_GEEKBENCH_EMAIL)
+	[-k <KEY>]\\t unlock Geekbench using EMAIL and KEY (default: $MY_GEEKBENCH_KEY)
+	[-n]\\t\\t do not upload results to the Geekbench Browser (only if unlocked)
+	[-h]\\t\\t displays help (this message)"
 	echo
 	exit "$returnCode"
 }
@@ -279,7 +281,7 @@ function download_benchmark() {
 
 echo_line
 
-while getopts ":e:k:h" opt; do
+while getopts "ne:k:h" opt; do
 	case $opt in
 	e)
 		MY_GEEKBENCH_EMAIL="$OPTARG"
@@ -287,11 +289,13 @@ while getopts ":e:k:h" opt; do
 	k)
 		MY_GEEKBENCH_KEY="$OPTARG"
 		;;
+	n)
+		MY_GEEKBENCH_NO_UPLOAD="1"
+		;;
 	h)
 		usage 0
 		;;
 	*)
-		echo "Invalid option: -$OPTARG"
 		usage 1
 		;;
 	esac
@@ -597,18 +601,22 @@ echo_code end
 
 echo_title "SysBench"
 
-echo_step "SysBench 1 x CPU"
+echo_step "SysBench Single-Core CPU performance test (1 thread)"
 echo_code start
-sysbench --test=cpu --cpu-max-prime=20000 --num-threads=1 run >> "$MY_OUTPUT"
+sysbench cpu --cpu-max-prime=20000 --threads=1 run >> "$MY_OUTPUT"
 echo_code end
 
 if [[ $MY_CPU_COUNT -gt "0" ]]; then
-	echo_step "SysBench $MY_CPU_COUNT x CPU"
+	echo_step "SysBench Multi-Core CPU performance test ($MY_CPU_COUNT threads)"
 	echo_code start
-	sysbench --test=cpu --cpu-max-prime=20000 --num-threads="$MY_CPU_COUNT" run >> "$MY_OUTPUT"
+	sysbench cpu --cpu-max-prime=20000 --threads="$MY_CPU_COUNT" run >> "$MY_OUTPUT"
 	echo_code end
 fi
 
+echo_step "SysBench Memory functions speed test"
+echo_code start
+sysbench memory run >> "$MY_OUTPUT"
+echo_code end
 
 #####################################################################
 # Run UnixBench
@@ -633,7 +641,11 @@ echo_line
 
 echo_title "Geekbench 5"
 echo_code start
-"$MY_DIR/geekbench5" >> "$MY_OUTPUT" 2>&1
+if [[ $MY_GEEKBENCH_NO_UPLOAD ]]; then
+	"$MY_DIR/geekbench5" --no-upload >> "$MY_OUTPUT" 2>&1
+else
+	"$MY_DIR/geekbench5" --upload >> "$MY_OUTPUT" 2>&1
+fi
 echo_code end
 
 
@@ -661,7 +673,7 @@ MY_DURATION_MIN=$((MY_DURATION_SEC/60))
 	echo    "    <li>Start: $MY_TIMESTAMP_START</li>"
 	echo    "    <li>End: $MY_TIMESTAMP_END</li>"
 	echo -n "    <li><b>Duration: "; printf "%.0f sec / %.2f min" "$MY_DURATION_SEC" "$MY_DURATION_MIN"; echo "</b></li>"
-	echo    "</ul>" 
+	echo    "</ul>"
 } >> "$MY_OUTPUT"
 
 
