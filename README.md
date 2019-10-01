@@ -3,9 +3,6 @@
 Bash Script which runs several Linux benchmarks (Sysbench, UnixBench and Geekbench).
 I've tried to keep it simple. You can adjust it quickly.
 
-With my other scripts you can [automate the installation](https://github.com/Cyclenerd/postinstall) and upload the result to [Pastebin](https://github.com/Cyclenerd/pastebin-shell). You can easily automate the complete benchmark.
-
-
 ## Demo Output
 
 https://cyclenerd.github.io/benchmark_demo/
@@ -45,7 +42,7 @@ Download:
 
 Alternative download with short URL:
 
-curl -fL http://bit.ly/benchmark_sh -o benchmark.sh
+	curl -fL http://bit.ly/benchmark_sh -o benchmark.sh
 
 
 ## Usage
@@ -58,11 +55,9 @@ Unlock Geekbench using EMAIL and KEY:
 
 	bash benchmark.sh -e <Geekbench license email> -k <Geekbench license key>
 
-Example including upload to Pastebin:
+Create GitHub gist with HTML results:
 
-	bash benchmark.sh && pbin -n "Acer A0756" -f "html5" -l < "/root/benchmark/output.html"
-
-You can get `pbin` here: https://github.com/Cyclenerd/pastebin-shell 
+	bash benchmark.sh -g <GitHub API token with scope gist>
 
 
 ## Program Flow

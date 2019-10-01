@@ -49,6 +49,10 @@ MY_GEEKBENCH_DOWNLOAD_URL="https://cyclenerd.github.io/benchmark/Geekbench-5.0.2
 MY_GEEKBENCH_EMAIL=""
 MY_GEEKBENCH_KEY=""
 
+# GitHub API personal access token with scope `gist` (Create gists)
+#    benchmark.sh -g <TOKEN>
+MY_GITHUB_API_TOKEN=""
+
 # Set maximal traceroute hop count
 MY_TRACEROUTE_MAX_HOP="15"
 
@@ -76,6 +80,7 @@ function usage {
 	[-e <EMAIL>]\\t unlock Geekbench using EMAIL and KEY (default: $MY_GEEKBENCH_EMAIL)
 	[-k <KEY>]\\t unlock Geekbench using EMAIL and KEY (default: $MY_GEEKBENCH_KEY)
 	[-n]\\t\\t do not upload results to the Geekbench Browser (only if unlocked)
+	[-g <TOKEN>]\\t GitHub API personal access token, create new gist with results (default: $MY_GEEKBENCH_KEY)
 	[-h]\\t\\t displays help (this message)"
 	echo
 	exit "$returnCode"
@@ -275,22 +280,27 @@ function download_benchmark() {
 		echo "Error"
 	fi
 }
+
+
 #####################################################################
 # MAIN
 #####################################################################
 
 echo_line
 
-while getopts "ne:k:h" opt; do
+while getopts "ne:k:g:h" opt; do
 	case $opt in
+	n)
+		MY_GEEKBENCH_NO_UPLOAD="1"
+		;;
 	e)
 		MY_GEEKBENCH_EMAIL="$OPTARG"
 		;;
 	k)
 		MY_GEEKBENCH_KEY="$OPTARG"
 		;;
-	n)
-		MY_GEEKBENCH_NO_UPLOAD="1"
+	g)
+		MY_GITHUB_API_TOKEN="$OPTARG"
 		;;
 	h)
 		usage 0
@@ -487,15 +497,12 @@ ping_benchmark "cachefly.cachefly.net"
 ping_benchmark "hetzner.de"
 # Germany (Frankfurt)
 ping_benchmark "ftp.hostserver.de"
-# Switzerland (Zurich)
-ping_benchmark "mirror.switch.ch"
 # IPv6
 ping_benchmark "ipv6.test-ipv6.com"
 
 traceroute_benchmark "cachefly.cachefly.net"
 traceroute_benchmark "hetzner.de"
 traceroute_benchmark "ftp.hostserver.de"
-traceroute_benchmark "mirror.switch.ch"
 
 download_benchmark 'Cachefly' 'http://cachefly.cachefly.net/100mb.test'
 #download_benchmark 'Linode, Atlanta, GA, USA' 'http://speedtest.atlanta.linode.com/100MB-atlanta.bin'
@@ -686,6 +693,27 @@ MY_DURATION_MIN=$((MY_DURATION_SEC/60))
 	echo "$ME - $MY_DATE_TIME"
 	echo "</html>"
 } >> "$MY_OUTPUT"
+
+
+#####################################################################
+# Create gist
+#####################################################################
+
+if [[ $MY_GITHUB_API_TOKEN ]]; then
+	echo " > Create new gist with HTML results"
+	MY_OUTPUT_CONTENT=$(sed -e 's/\r//' -e's/\t/\\t/g' -e 's/"/\\"/g' "$MY_OUTPUT" | awk '{ printf($0 "\\n") }')
+	MY_GIST_CONCENT="{\"description\":\"benchmark.sh output\",\"public\":false,\"files\":{\"$MY_TIMESTAMP_START.html\":{\"content\":\"$MY_OUTPUT_CONTENT\"}}}"
+	if curl -X POST -H "Authorization: token $MY_GITHUB_API_TOKEN" -d "$MY_GIST_CONCENT" "https://api.github.com/gists" >> /dev/null 2>&1; then
+		echo "    > Upload successful"
+	else
+		echo "    > Upload failed"
+	fi
+fi
+
+
+#####################################################################
+# DONE
+#####################################################################
 
 echo
 echo_line
