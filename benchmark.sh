@@ -52,6 +52,7 @@ MY_GEEKBENCH_KEY=""
 # GitHub API personal access token with scope `gist` (Create gists)
 #    benchmark.sh -g <TOKEN>
 MY_GITHUB_API_TOKEN=""
+MY_GITHUB_API_JSON="$MY_DIR/github-gist.json"
 MY_GITHUB_API_LOG="$MY_DIR/github-gist.log"
 
 # Set maximal traceroute hop count
@@ -704,7 +705,8 @@ if [[ $MY_GITHUB_API_TOKEN ]]; then
 	echo " > Create new gist with HTML results"
 	MY_OUTPUT_CONTENT=$(sed -e 's/\r//' -e's/\t/\\t/g' -e 's/"/\\"/g' "$MY_OUTPUT" | awk '{ printf($0 "\\n") }')
 	MY_GIST_CONCENT="{\"description\":\"benchmark.sh output\",\"public\":false,\"files\":{\"$MY_TIMESTAMP_START.html\":{\"content\":\"$MY_OUTPUT_CONTENT\"}}}"
-	if curl -X POST -H "Authorization: token $MY_GITHUB_API_TOKEN" -d "$MY_GIST_CONCENT" "https://api.github.com/gists" >> "$MY_GITHUB_API_LOG" 2>&1; then
+	echo "$MY_GIST_CONCENT" > "$MY_GITHUB_API_JSON"
+	if curl -X POST -H "Authorization: token $MY_GITHUB_API_TOKEN" -d @"$MY_GITHUB_API_JSON" "https://api.github.com/gists" >> "$MY_GITHUB_API_LOG" 2>&1; then
 		echo "    > Upload successful"
 	else
 		echo "    > Upload failed"
