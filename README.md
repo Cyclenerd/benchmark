@@ -59,6 +59,10 @@ Create GitHub gist with HTML results:
 
 	bash benchmark.sh -g <GitHub API token with scope gist>
 
+Help:
+
+	bash benchmark.sh -h
+
 
 ## Program Flow
 
