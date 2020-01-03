@@ -36,10 +36,9 @@ MY_OUTPUT="$MY_DIR/output.html"
 
 # Benchmarks without package for Linux distribution
 # These benchmark programs are loaded:
-MY_UNIXBENCH_DOWNLOAD_URL="https://cyclenerd.github.io/benchmark/byte-unixbench-5.1.3.tar.gz"
+MY_UNIXBENCH_DOWNLOAD_URL="https://www.nkn-it.de/backup/byte-unixbench-5.1.3.tar.gz"
 #MY_UNIXBENCH_DOWNLOAD_URL="https://github.com/kdlucas/byte-unixbench/archive/v5.1.3.tar.gz"
-MY_GEEKBENCH_DOWNLOAD_URL="https://cyclenerd.github.io/benchmark/Geekbench-5.0.2-Linux.tar.gz"
-#MY_GEEKBENCH_DOWNLOAD_URL="http://cdn.geekbench.com/Geekbench-Geekbench-5.0.2-Linux.tar.gz"
+MY_GEEKBENCH_DOWNLOAD_URL="http://cdn.geekbench.com/Geekbench-5.1.0-Linux.tar.gz"
 
 # Unlock Geekbench using EMAIL and KEY
 # If you purchased Geekbench, enter your email address and license
