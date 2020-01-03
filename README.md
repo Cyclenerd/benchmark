@@ -5,7 +5,7 @@ I've tried to keep it simple. You can adjust it quickly.
 
 ## Demo Output
 
-https://cyclenerd.github.io/benchmark_demo/
+https://www.nkn-it.de/benchmark_demo/
 
 
 ## Requirements
