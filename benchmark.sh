@@ -38,7 +38,7 @@ MY_OUTPUT="$MY_DIR/output.html"
 # These benchmark programs are loaded:
 MY_UNIXBENCH_DOWNLOAD_URL="https://www.nkn-it.de/backup/byte-unixbench-5.1.3.tar.gz"
 #MY_UNIXBENCH_DOWNLOAD_URL="https://github.com/kdlucas/byte-unixbench/archive/v5.1.3.tar.gz"
-MY_GEEKBENCH_DOWNLOAD_URL="http://cdn.geekbench.com/Geekbench-5.1.1-Linux.tar.gz"
+MY_GEEKBENCH_DOWNLOAD_URL="https://cdn.geekbench.com/Geekbench-5.4.3-Linux.tar.gz"
 
 # Unlock Geekbench using EMAIL and KEY
 # If you purchased Geekbench, enter your email address and license
