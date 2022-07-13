@@ -21,6 +21,8 @@ https://www.nkn-it.de/benchmark_demo/
 	* ifconfig
 	* ping
 	* traceroute
+* PCI Utilities
+	* lspci
 * [Hardware Lister (lshw)](http://www.ezix.org/project/wiki/HardwareLiSter)
 * [dd](https://www.gnu.org/software/coreutils/manual/)
 * [IOPing](https://github.com/koct9i/ioping)
@@ -29,7 +31,23 @@ https://www.nkn-it.de/benchmark_demo/
 
 These Ubuntu packages should be installed:
 
-	apt-get install bash curl make gcc build-essential net-tools inetutils-ping traceroute perl lshw ioping fio sysbench
+```bash
+apt-get install     \
+	bash            \
+	curl            \
+	make            \
+	gcc             \
+	build-essential \
+	net-tools       \
+	inetutils-ping  \
+	traceroute      \
+	pciutils        \
+	perl            \
+	lshw            \
+	ioping          \
+	fio             \
+	sysbench
+```
 
 [UnixBench](https://github.com/kdlucas/byte-unixbench) and [Geekbench 5](http://geekbench.com/) are automatically loaded and are temporarily installed.
 

@@ -353,7 +353,10 @@ if ! command_exists ifconfig; then
 	exit_with_failure "'ifconfig' is needed. Please install network tools (Ubuntu package 'net-tools') for your operating system."
 fi
 if ! command_exists ping; then
-	exit_with_failure "'ping' is needed. Please install network tools (Ubuntu package 'net-tools') for your operating system."
+	exit_with_failure "'ping' is needed. Please install network tools (Ubuntu package 'net-tools' and 'inetutils-ping') for your operating system."
+fi
+if ! command_exists lspci; then
+	exit_with_failure "'lspci' is needed. Please install network tools (Ubuntu package 'pciutils') for your operating system."
 fi
 if ! command_exists traceroute; then
 	exit_with_failure "'traceroute' is needed. Please install 'traceroute'."
