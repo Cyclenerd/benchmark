@@ -29,7 +29,7 @@ https://www.nkn-it.de/benchmark_demo/
 
 These Ubuntu packages should be installed:
 
-	apt-get install bash curl make gcc build-essential net-tools traceroute perl lshw ioping fio sysbench
+	apt-get install bash curl make gcc build-essential net-tools inetutils-ping traceroute perl lshw ioping fio sysbench
 
 [UnixBench](https://github.com/kdlucas/byte-unixbench) and [Geekbench 5](http://geekbench.com/) are automatically loaded and are temporarily installed.
 
